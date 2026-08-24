@@ -1,0 +1,814 @@
+local HellsUI = {}
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+--==================================================
+-- DEFAULT THEME
+--==================================================
+
+local DEFAULT_THEME = {
+	Background = Color3.fromRGB(63, 63, 63),
+	Accent = Color3.fromRGB(255, 0, 0),
+	Text = Color3.fromRGB(255, 255, 255),
+
+	Font = Enum.Font.SourceSans,
+	TextSize = 23,
+
+	ButtonHeight = 50,
+	Width = 210,
+	Height = 442,
+
+	Position = UDim2.new(0.709, 0, 0.030, 0),
+}
+
+--==================================================
+-- CREATE WINDOW
+--==================================================
+
+function HellsUI:CreateWindow(config)
+
+	config = config or {}
+
+	local theme = {}
+
+	for key, value in pairs(DEFAULT_THEME) do
+		theme[key] = value
+	end
+
+	if config.Theme then
+		for key, value in pairs(config.Theme) do
+			theme[key] = value
+		end
+	end
+
+	local player = Players.LocalPlayer
+	local playerGui = player:WaitForChild("PlayerGui")
+
+	--==================================================
+	-- SCREEN GUI
+	--==================================================
+
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "HellsUI"
+	ScreenGui.ResetOnSpawn = false
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	ScreenGui.Parent = playerGui
+
+	--==================================================
+	-- MAIN FRAME
+	--==================================================
+
+	local LineFrame = Instance.new("Frame")
+
+	LineFrame.Name = "LineFrame"
+	LineFrame.Parent = ScreenGui
+
+	LineFrame.BackgroundColor3 = theme.Accent
+	LineFrame.BorderSizePixel = 0
+	LineFrame.BackgroundTransparency = 1
+	LineFrame.Position =
+		config.Position or theme.Position
+
+	LineFrame.Size = UDim2.new(
+		0,
+		theme.Width + 2,
+		0,
+		theme.Height
+	)
+	-- Top border
+	local TopBorder = Instance.new("Frame")
+	TopBorder.Parent = LineFrame
+	TopBorder.BackgroundColor3 = theme.Accent
+	TopBorder.BorderSizePixel = 0
+	TopBorder.Position = UDim2.new(0, 0, 0, 0)
+	TopBorder.Size = UDim2.new(1, 0, 0, 1)
+
+	-- Bottom border
+	local BottomBorder = Instance.new("Frame")
+	BottomBorder.Parent = LineFrame
+	BottomBorder.BackgroundColor3 = theme.Accent
+	BottomBorder.BorderSizePixel = 0
+	BottomBorder.Position = UDim2.new(0, 0, 1, -1)
+	BottomBorder.Size = UDim2.new(1, 0, 0, 1)
+
+	-- Left border
+	local LeftBorder = Instance.new("Frame")
+	LeftBorder.Parent = LineFrame
+	LeftBorder.BackgroundColor3 = theme.Accent
+	LeftBorder.BorderSizePixel = 0
+	LeftBorder.Position = UDim2.new(0, 0, 0, 0)
+	LeftBorder.Size = UDim2.new(0, 1, 1, 0)
+
+	-- Right border
+	local RightBorder = Instance.new("Frame")
+	RightBorder.Parent = LineFrame
+	RightBorder.BackgroundColor3 = theme.Accent
+	RightBorder.BorderSizePixel = 0
+	RightBorder.Position = UDim2.new(1, -1, 0, 0)
+	RightBorder.Size = UDim2.new(0, 1, 1, 0)
+	
+	-- add the gradient
+
+	local BackgroundFrame = Instance.new("Frame")
+	BackgroundFrame.Name = "BackgroundFrame"
+	BackgroundFrame.Parent = LineFrame
+
+	BackgroundFrame.BackgroundColor3 = theme.Background
+	BackgroundFrame.BackgroundTransparency = 0
+
+	BackgroundFrame.BorderSizePixel = 0
+
+	BackgroundFrame.Position = UDim2.new(0, 1, 0, 1)
+	BackgroundFrame.Size = UDim2.new(
+		0,
+		theme.Width,
+		0,
+		theme.Height - 2
+	)
+
+	local Gradient = Instance.new("UIGradient")
+	Gradient.Parent = BackgroundFrame
+
+	Gradient.Rotation = 0
+
+	Gradient.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0),
+		NumberSequenceKeypoint.new(0.5, 1),
+		NumberSequenceKeypoint.new(1, 0)
+	})
+
+	--==================================================
+	-- TITLE
+	--==================================================
+
+	local TitleFrame = Instance.new("Frame")
+
+	TitleFrame.Name = "TitleFrame"
+	TitleFrame.Parent = LineFrame
+
+	TitleFrame.BackgroundColor3 = theme.Background
+	TitleFrame.BorderColor3 = theme.Accent
+	TitleFrame.BorderSizePixel = 0.1
+	TitleFrame.BackgroundTransparency = 1
+	TitleFrame.Position = UDim2.new(
+		0,
+		1,
+		0,
+		0
+	)
+
+	TitleFrame.Size = UDim2.new(
+		0,
+		theme.Width,
+		0,
+		68
+	)
+	
+	local Divider = Instance.new("Frame")
+	Divider.Name = "Divider"
+	Divider.Parent = LineFrame
+
+	Divider.BackgroundColor3 = theme.Accent
+	Divider.BorderSizePixel = 0
+
+	Divider.Position = UDim2.new(
+		0,
+		1,
+		0,
+		67
+	)
+
+	Divider.Size = UDim2.new(
+		0,
+		theme.Width,
+		0,
+		1
+	)
+
+	Divider.ZIndex = 10
+	
+	local Title = Instance.new("TextLabel")
+
+	Title.Name = "Title"
+	Title.Parent = TitleFrame
+
+	Title.BackgroundTransparency = 1
+	
+	Title.Size = UDim2.new(
+		1,
+		0,
+		0,
+		50
+	)
+
+	Title.Font = theme.Font
+
+	Title.Text =
+		config.Title or "Hell's Vengeance"
+
+	Title.TextColor3 = theme.Text
+	Title.TextSize = theme.TextSize
+
+	--==================================================
+	-- PAGE CONTAINER
+	--==================================================
+
+	local PageContainer = Instance.new("Frame")
+
+	PageContainer.Name = "PageContainer"
+	PageContainer.Parent = LineFrame
+
+	PageContainer.BackgroundTransparency = 1
+	PageContainer.BorderSizePixel = 0
+
+	PageContainer.Position = UDim2.new(
+		0,
+		1,
+		0,
+		69
+	)
+
+	PageContainer.Size = UDim2.new(
+		0,
+		theme.Width,
+		1,
+		-70
+	)
+
+	--==================================================
+	-- WINDOW OBJECT
+	--==================================================
+
+	local Window = {}
+
+	Window.Gui = ScreenGui
+	Window.Frame = LineFrame
+	Window.Title = Title
+	Window.Pages = {}
+
+	local currentPage = nil
+	local currentIndex = 1
+
+	local pageHistory = {}
+
+	--==================================================
+	-- CREATE PAGE
+	--==================================================
+
+	local function createPage(name, parentPage)
+
+		local Page = {}
+
+		Page.Name = name
+		Page.ParentPage = parentPage
+		Page.Window = Window
+
+		Page.Buttons = {}
+		Page.Pages = {}
+
+		--==================================================
+		-- PAGE FRAME
+		--==================================================
+
+		local frame = Instance.new("Frame")
+
+		frame.Name = name .. "Page"
+		frame.Parent = PageContainer
+
+		frame.BackgroundColor3 = theme.Background
+		frame.BorderSizePixel = 0
+		frame.BackgroundTransparency = 1
+		frame.Size = UDim2.new(
+			1,
+			0,
+			1,
+			0
+		)
+
+		frame.Visible = false
+
+		--==================================================
+		-- LIST LAYOUT
+		--==================================================
+
+		local layout = Instance.new("UIListLayout")
+
+		layout.Parent = frame
+		layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+		Page.Frame = frame
+		Page.Layout = layout
+
+		--==================================================
+		-- CREATE BUTTON
+		--==================================================
+
+		function Page:CreateButton(text, callback)
+
+			local Button = {}
+
+			Button.Type = "Button"
+			Button.Text = text
+			Button.Callback = callback
+
+			local button = Instance.new("TextButton")
+
+			button.Name = text
+			button.Parent = frame
+
+			button.BackgroundColor3 =
+				theme.Background
+
+			button.BorderSizePixel = 0
+			
+			button.Size = UDim2.new(
+				1,
+				0,
+				0,
+				theme.ButtonHeight
+			)
+
+			button.Font = theme.Font
+			button.Text = text
+			button.TextColor3 = theme.Text
+			button.TextSize = theme.TextSize
+			button.TextWrapped = true
+
+			button.AutoButtonColor = false
+
+			Button.Instance = button
+
+			table.insert(
+				Page.Buttons,
+				Button
+			)
+
+			return Button
+		end
+
+		--==================================================
+		-- CREATE TOGGLE
+		--==================================================
+
+		function Page:CreateToggle(
+			text,
+			defaultValue,
+			callback
+		)
+
+			local Toggle = {}
+
+			Toggle.Type = "Toggle"
+			Toggle.Text = text
+			Toggle.Value = defaultValue or false
+			Toggle.Callback = callback
+
+			local button = Instance.new("TextButton")
+
+			button.Name = text
+			button.Parent = frame
+
+			button.BackgroundColor3 =
+				theme.Background
+
+			button.BorderSizePixel = 0
+
+			button.Size = UDim2.new(
+				1,
+				0,
+				0,
+				theme.ButtonHeight
+			)
+
+			button.Font = theme.Font
+			button.TextColor3 = theme.Text
+			button.TextSize = theme.TextSize
+			button.TextWrapped = true
+
+			button.AutoButtonColor = false
+
+			Toggle.Instance = button
+
+			--==============================================
+			-- UPDATE TEXT
+			--==============================================
+
+			local function updateToggle()
+
+				if Toggle.Value then
+
+					button.Text =
+						text .. " [ON]"
+
+				else
+
+					button.Text =
+						text .. " [OFF]"
+
+				end
+			end
+
+			--==============================================
+			-- SET VALUE
+			--==============================================
+
+			function Toggle:SetValue(value)
+
+				Toggle.Value = value == true
+
+				updateToggle()
+
+				if Toggle.Callback then
+
+					Toggle.Callback(
+						Toggle.Value
+					)
+
+				end
+			end
+
+			--==============================================
+			-- GET VALUE
+			--==============================================
+
+			function Toggle:GetValue()
+
+				return Toggle.Value
+
+			end
+
+			updateToggle()
+
+			table.insert(
+				Page.Buttons,
+				Toggle
+			)
+
+			return Toggle
+		end
+
+		--==================================================
+		-- CREATE SUB-PAGE
+		--==================================================
+
+		function Page:CreatePage(name)
+
+			local childPage =
+				createPage(
+					name,
+					Page
+				)
+
+			Page.Pages[name] =
+				childPage
+
+			local pageButton = Instance.new("TextButton")
+
+			pageButton.Name = name
+			pageButton.Parent = frame
+
+			pageButton.BackgroundColor3 =
+				theme.Background
+
+			pageButton.BorderSizePixel = 0
+
+			pageButton.Size = UDim2.new(
+				1,
+				0,
+				0,
+				theme.ButtonHeight
+			)
+
+			pageButton.Font = theme.Font
+			pageButton.Text = name
+			pageButton.TextColor3 = theme.Text
+			pageButton.TextSize = theme.TextSize
+			pageButton.TextWrapped = true
+
+			pageButton.AutoButtonColor = false
+
+			local Button = {}
+
+			Button.Type = "Page"
+			Button.Text = name
+			Button.TargetPage = childPage
+			Button.Instance = pageButton
+
+			table.insert(
+				Page.Buttons,
+				Button
+			)
+
+			return childPage
+		end
+
+		--==================================================
+		-- SHOW PAGE
+		--==================================================
+
+		function Page:Show()
+
+			if currentPage then
+
+				currentPage.Frame.Visible =
+					false
+
+			end
+
+			Page.Frame.Visible = true
+
+			currentPage = Page
+			currentIndex = 1
+
+			Window:UpdateSelection()
+		end
+
+		--==================================================
+		-- HIDE PAGE
+		--==================================================
+
+		function Page:Hide()
+
+			Page.Frame.Visible = false
+
+			if currentPage == Page then
+				currentPage = nil
+			end
+		end
+
+		function Page:GetParent()
+
+			return Page.ParentPage
+
+		end
+
+		return Page
+	end
+
+	--==================================================
+	-- CREATE TOP LEVEL PAGE
+	--==================================================
+
+	function Window:CreatePage(name)
+
+		local Page =
+			createPage(name, nil)
+
+		Window.Pages[name] = Page
+
+		if not currentPage then
+			Page:Show()
+		end
+
+		return Page
+	end
+
+	--==================================================
+	-- UPDATE SELECTION
+	--==================================================
+
+	function Window:UpdateSelection()
+
+		if not currentPage then
+			return
+		end
+
+		local buttons =
+			currentPage.Buttons
+
+		if #buttons == 0 then
+			return
+		end
+
+		if currentIndex < 1 then
+			currentIndex = #buttons
+		end
+
+		if currentIndex > #buttons then
+			currentIndex = 1
+		end
+
+		for index, buttonData in ipairs(buttons) do
+
+			if index == currentIndex then
+
+				buttonData.Instance.BackgroundColor3 =
+					theme.Accent
+
+			else
+
+				buttonData.Instance.BackgroundColor3 =
+					theme.Background
+
+			end
+		end
+	end
+
+	--==================================================
+	-- OPEN PAGE
+	--==================================================
+
+	function Window:OpenPage(page)
+
+		if not page then
+			return
+		end
+
+		if currentPage then
+
+			table.insert(
+				pageHistory,
+				currentPage
+			)
+
+		end
+
+		page:Show()
+	end
+
+	--==================================================
+	-- BACK
+	--==================================================
+
+	function Window:Back()
+
+		if #pageHistory == 0 then
+			return
+		end
+
+		local previousPage =
+			table.remove(pageHistory)
+
+		if previousPage then
+			previousPage:Show()
+		end
+	end
+
+	--==================================================
+	-- SELECT
+	--==================================================
+
+	function Window:Select()
+
+		if not currentPage then
+			return
+		end
+
+		local buttonData =
+			currentPage.Buttons[currentIndex]
+
+		if not buttonData then
+			return
+		end
+
+		--==============================================
+		-- PAGE
+		--==============================================
+
+		if buttonData.Type == "Page" then
+
+			Window:OpenPage(
+				buttonData.TargetPage
+			)
+
+			return
+		end
+
+		--==============================================
+		-- TOGGLE
+		--==============================================
+
+		if buttonData.Type == "Toggle" then
+
+			buttonData:SetValue(
+				not buttonData.Value
+			)
+
+			return
+		end
+
+		--==============================================
+		-- BUTTON
+		--==============================================
+
+		if buttonData.Type == "Button" then
+
+			if buttonData.Callback then
+
+				buttonData.Callback()
+
+			end
+		end
+	end
+
+	--==================================================
+	-- KEYBOARD INPUT
+	--==================================================
+
+	UserInputService.InputBegan:Connect(
+		function(input, processed)
+
+			if processed then
+				return
+			end
+
+			if not currentPage then
+				return
+			end
+
+			local buttons =
+				currentPage.Buttons
+
+			if #buttons == 0 then
+				return
+			end
+
+			-- UP
+
+			if input.KeyCode == Enum.KeyCode.Up then
+
+				currentIndex -= 1
+
+				if currentIndex < 1 then
+					currentIndex = #buttons
+				end
+
+				Window:UpdateSelection()
+
+				-- DOWN
+
+			elseif input.KeyCode == Enum.KeyCode.Down then
+
+				currentIndex += 1
+
+				if currentIndex > #buttons then
+					currentIndex = 1
+				end
+
+				Window:UpdateSelection()
+
+				-- ENTER
+
+			elseif input.KeyCode == Enum.KeyCode.Return then
+
+				Window:Select()
+
+				-- BACK
+
+			elseif input.KeyCode == Enum.KeyCode.Escape
+				or input.KeyCode == Enum.KeyCode.Backspace then
+
+				Window:Back()
+
+			end
+		end
+	)
+	
+	local uiHidden = false
+	local vHeld = false
+	local rightClickHeld = false
+
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if processed then
+			return
+		end
+
+		if input.KeyCode == Enum.KeyCode.V then
+			vHeld = true
+		end
+
+		if input.UserInputType == Enum.UserInputType.MouseButton2 then
+			rightClickHeld = true
+		end
+
+		if vHeld and rightClickHeld then
+			uiHidden = not uiHidden
+			ScreenGui.Enabled = not uiHidden
+		end
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+		if input.KeyCode == Enum.KeyCode.V then
+			vHeld = false
+		end
+
+		if input.UserInputType == Enum.UserInputType.MouseButton2 then
+			rightClickHeld = false
+		end
+	end)
+	
+	--==================================================
+	-- DESTROY
+	--==================================================
+
+	function Window:Destroy()
+
+		ScreenGui:Destroy()
+
+	end
+
+	return Window
+end
+
+return HellsUI
