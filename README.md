@@ -149,7 +149,6 @@ end)
 # 📂 Subpages
 
 Pages can also contain their own pages.
-
 For example:
 
 ```lua
@@ -158,7 +157,7 @@ local Main = Window:CreatePage("Main")
 local Fun = Main:CreatePage("Fun")
 ```
 
-This creates a **Fun** subpage under the **Main** page.
+This creates a **Fun** subpage under the **Main** page this creates a button to navigate to the subpage under **Main**.
 
 You can then add buttons and toggles to the subpage normally.
 
