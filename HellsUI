@@ -203,6 +203,7 @@ function HellsUI:CreateWindow(config)
 	)
 
 	Title.Font = theme.Font
+	Title.FontFace = Font.fromEnum(Enum.Font.SourceSansBold)
 
 	Title.Text =
 		config.Title or "Hell's Vengeance"
