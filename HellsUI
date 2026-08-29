@@ -750,7 +750,7 @@ function HellsUI:CreateWindow(config)
 
 				-- ENTER
 
-			elseif input.KeyCode == Enum.KeyCode.Return then
+			elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Space then
 
 				Window:Select()
 
